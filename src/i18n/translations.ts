@@ -15,8 +15,8 @@ export const translations = {
 
     // Hero
     hero: {
-      location: '河南 · 郑州',
-      title: '行走的中原文脉',
+      location: '中国 · 河南',
+      title: '行走于中原文脉',
       subtitle: 'Walk the Central Plains, Read China\'s Soul',
       tagline: '让每一次出发，都成为一场文化朝圣',
       description: '专注高净值家庭与 5-7 人商务团队的高端文化定制旅行\n深耕中原文化秘境，做您最懂河南的文化同行者',
@@ -252,7 +252,7 @@ export const translations = {
 
     // Hero
     hero: {
-      location: 'Zhengzhou, Henan',
+      location: 'China · Henan',
       title: 'Walk the Central Plains',
       subtitle: 'Read China\'s Soul',
       tagline: 'Every journey is a cultural pilgrimage',
