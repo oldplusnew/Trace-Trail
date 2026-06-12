@@ -1,13 +1,1398 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xunzong-travel</title>
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <title>寻踪文旅 | Trace & Trail</title>
+    <style>
+      :root {
+        --dark: #2f4b5d;
+        --light: #f8f4ed;
+        --red: #c3272b;
+        --muted: rgba(47, 75, 93, 0.64);
+        --line: rgba(47, 75, 93, 0.12);
+        --paper: #fffaf2;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--light);
+        color: var(--dark);
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        overflow-x: hidden;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .serif {
+        font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      }
+
+      .serif-en {
+        font-family: "EB Garamond", Georgia, serif;
+      }
+
+      .container {
+        width: min(1180px, calc(100vw - 40px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transition: background 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .nav.scrolled,
+      .nav.open {
+        background: rgba(248, 244, 237, 0.96);
+        box-shadow: 0 10px 30px rgba(47, 75, 93, 0.08);
+        backdrop-filter: blur(14px);
+      }
+
+      .nav-row {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: max-content;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--dark);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+
+      .brand-name {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 34px;
+        color: rgba(47, 75, 93, 0.82);
+        letter-spacing: 0.08em;
+        font-size: 15px;
+      }
+
+      .nav-links a {
+        position: relative;
+        padding: 10px 0;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 3px;
+        width: 0;
+        height: 2px;
+        background: var(--red);
+        transition: width 0.25s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .icon-button,
+      .lang-button {
+        border: 1px solid rgba(47, 75, 93, 0.24);
+        background: transparent;
+        color: var(--dark);
+        height: 38px;
+        min-width: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .lang-button {
+        padding: 0 12px;
+        letter-spacing: 0.08em;
+      }
+
+      .mobile-toggle {
+        display: none;
+      }
+
+      .mobile-panel {
+        display: none;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 28px;
+        border: 1px solid var(--dark);
+        background: transparent;
+        color: var(--dark);
+        cursor: pointer;
+        letter-spacing: 0.08em;
+        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background: var(--dark);
+        color: var(--light);
+      }
+
+      .btn-primary:hover {
+        background: var(--red);
+        border-color: var(--red);
+      }
+
+      .section {
+        padding: 104px 0;
+      }
+
+      .section.white {
+        background: var(--white);
+      }
+
+      .section-head {
+        text-align: center;
+        margin-bottom: 58px;
+      }
+
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 18px;
+        color: var(--red);
+        font-size: 13px;
+        letter-spacing: 0.26em;
+        margin-bottom: 18px;
+      }
+
+      .section-label::before,
+      .section-label::after {
+        content: "";
+        width: 54px;
+        height: 2px;
+        background: var(--red);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      .section-title {
+        font-size: clamp(32px, 5vw, 54px);
+        margin-bottom: 10px;
+        letter-spacing: 0.08em;
+      }
+
+      .section-subtitle {
+        color: var(--muted);
+        font-size: 20px;
+        font-style: italic;
+      }
+
+      .hero {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 120px 0 80px;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 82% 16%, rgba(47, 75, 93, 0.08), transparent 16rem),
+          radial-gradient(circle at 14% 78%, rgba(195, 39, 43, 0.07), transparent 14rem),
+          linear-gradient(112deg, transparent 0 66%, rgba(47, 75, 93, 0.045) 66% 66.2%, transparent 66.2% 100%);
+      }
+
+      .hero-content {
+        position: relative;
+        text-align: center;
+        width: min(900px, calc(100vw - 40px));
+        margin: 0 auto;
+      }
+
+      .location {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 28px;
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: 0.28em;
+      }
+
+      .hero h1 {
+        font-size: clamp(48px, 10vw, 104px);
+        line-height: 1.08;
+        margin-bottom: 12px;
+        letter-spacing: 0.12em;
+      }
+
+      .hero-subtitle {
+        font-size: clamp(24px, 4vw, 38px);
+        color: var(--muted);
+        font-style: italic;
+        margin-bottom: 32px;
+      }
+
+      .diamond-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin: 32px 0;
+      }
+
+      .diamond-divider span {
+        width: 52px;
+        height: 1px;
+        background: rgba(47, 75, 93, 0.35);
+      }
+
+      .diamond-divider i {
+        width: 9px;
+        height: 9px;
+        background: var(--red);
+        transform: rotate(45deg);
+      }
+
+      .hero-tagline {
+        font-size: clamp(20px, 3vw, 25px);
+        line-height: 1.7;
+        letter-spacing: 0.08em;
+        margin-bottom: 12px;
+      }
+
+      .hero-desc {
+        white-space: pre-line;
+        color: var(--muted);
+        line-height: 1.8;
+        margin-bottom: 38px;
+      }
+
+      .hero-actions {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .stats {
+        margin: 70px auto 0;
+        max-width: 620px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .stat-num {
+        font-size: 34px;
+        font-weight: 700;
+      }
+
+      .stat-label {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+      }
+
+      .grid {
+        display: grid;
+        gap: 24px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid var(--line);
+        padding: 32px;
+        position: relative;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 45px rgba(47, 75, 93, 0.1);
+        border-color: rgba(47, 75, 93, 0.24);
+      }
+
+      .value-num {
+        position: absolute;
+        top: 20px;
+        right: 24px;
+        color: rgba(47, 75, 93, 0.09);
+        font-size: 54px;
+        font-weight: 800;
+      }
+
+      .icon-box {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(47, 75, 93, 0.2);
+        color: var(--dark);
+        margin-bottom: 22px;
+        font-weight: 700;
+      }
+
+      .card h3 {
+        font-size: 24px;
+        margin-bottom: 14px;
+        letter-spacing: 0.04em;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.75;
+        font-size: 15px;
+        margin-bottom: 0;
+      }
+
+      .theme-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+
+      .theme-card::before {
+        content: "";
+        display: block;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dark), rgba(47, 75, 93, 0.68));
+      }
+
+      .theme-inner {
+        padding: 30px;
+      }
+
+      .theme-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+
+      .theme-en {
+        color: rgba(47, 75, 93, 0.42);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-align: right;
+      }
+
+      .highlight {
+        color: var(--red);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 14px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+        margin-top: 22px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        background: var(--light);
+        padding: 7px 10px;
+        font-size: 12px;
+        color: rgba(47, 75, 93, 0.82);
+      }
+
+      .founder-grid {
+        display: grid;
+        grid-template-columns: 5fr 7fr;
+        gap: 56px;
+        align-items: start;
+      }
+
+      .founder-photo {
+        aspect-ratio: 4 / 5;
+        width: 100%;
+        object-fit: cover;
+        object-position: top;
+        display: block;
+        border: 1px solid var(--line);
+        background: var(--white);
+      }
+
+      .quote-box {
+        background: var(--white);
+        border: 1px solid var(--line);
+        padding: 24px;
+        margin-top: 24px;
+        color: var(--dark);
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      .bio {
+        color: rgba(47, 75, 93, 0.82);
+        line-height: 1.85;
+        margin-bottom: 28px;
+      }
+
+      .credential {
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid var(--line);
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      .credential h3 {
+        font-size: 19px;
+        margin-bottom: 6px;
+      }
+
+      .detail {
+        color: var(--red);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+
+      .roles {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .role {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid var(--line);
+        padding: 18px 12px;
+      }
+
+      .role strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .role span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .service-card {
+        background: var(--light);
+        border: 1px solid var(--line);
+        padding: 26px;
+      }
+
+      .service-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+
+      .service-title h3 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .service-card ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: var(--muted);
+        line-height: 1.9;
+        font-size: 14px;
+      }
+
+      .service-card li::before {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 99px;
+        background: var(--red);
+        margin-right: 10px;
+        transform: translateY(-2px);
+      }
+
+      .highlight-band {
+        margin-top: 58px;
+        background: var(--dark);
+        color: var(--light);
+        padding: 42px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        text-align: center;
+      }
+
+      .highlight-band .num {
+        font-size: 40px;
+        font-weight: 800;
+      }
+
+      .highlight-band .unit {
+        color: rgba(248, 244, 237, 0.58);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+
+      .highlight-band .label {
+        margin-top: 12px;
+        color: rgba(248, 244, 237, 0.82);
+      }
+
+      .bottom-quote {
+        white-space: pre-line;
+        max-width: 820px;
+        margin: 44px auto 0;
+        text-align: center;
+        color: var(--muted);
+        line-height: 1.9;
+        font-size: 19px;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 4fr 8fr;
+        gap: 48px;
+      }
+
+      .contact-info {
+        background: var(--dark);
+        color: var(--light);
+        padding: 38px;
+      }
+
+      .contact-info h3 {
+        font-size: 28px;
+        margin-bottom: 28px;
+      }
+
+      .contact-line {
+        margin-bottom: 24px;
+      }
+
+      .contact-line span {
+        display: block;
+        color: rgba(248, 244, 237, 0.58);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .contact-line strong {
+        white-space: pre-line;
+        font-weight: 500;
+        line-height: 1.7;
+      }
+
+      .contact-quote {
+        border-top: 1px solid rgba(248, 244, 237, 0.14);
+        margin-top: 30px;
+        padding-top: 28px;
+        color: rgba(248, 244, 237, 0.6);
+        line-height: 1.7;
+        font-style: italic;
+      }
+
+      form {
+        background: var(--white);
+        border: 1px solid var(--line);
+        padding: 36px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      label {
+        display: block;
+        color: var(--dark);
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: var(--light);
+        color: var(--dark);
+        padding: 13px 14px;
+        outline: none;
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .success {
+        display: none;
+        background: var(--white);
+        border: 1px solid var(--line);
+        padding: 60px 36px;
+        text-align: center;
+        min-height: 420px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .success.show {
+        display: flex;
+      }
+
+      .success h3 {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+
+      footer {
+        background: var(--dark);
+        color: rgba(248, 244, 237, 0.68);
+      }
+
+      .footer-main {
+        padding: 64px 0;
+        display: grid;
+        grid-template-columns: 5fr 2fr 3fr;
+        gap: 60px;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+
+      .footer-brand .brand-mark {
+        border-color: rgba(248, 244, 237, 0.34);
+      }
+
+      .footer-brand strong {
+        color: var(--light);
+        font-size: 21px;
+        letter-spacing: 0.14em;
+      }
+
+      footer h4 {
+        color: var(--light);
+        margin-bottom: 20px;
+      }
+
+      footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        line-height: 2.2;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid rgba(248, 244, 237, 0.1);
+        padding: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: 12px;
+        color: rgba(248, 244, 237, 0.42);
+      }
+
+      [data-animate] {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      [data-animate].visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 980px) {
+        .nav-links,
+        .nav-actions .desktop-cta {
+          display: none;
+        }
+
+        .mobile-toggle {
+          display: inline-flex;
+        }
+
+        .mobile-panel {
+          display: block;
+          max-height: 0;
+          overflow: hidden;
+          background: rgba(248, 244, 237, 0.98);
+          transition: max-height 0.25s ease;
+        }
+
+        .nav.open .mobile-panel {
+          max-height: 420px;
+          box-shadow: 0 18px 36px rgba(47, 75, 93, 0.1);
+        }
+
+        .mobile-panel a {
+          display: block;
+          padding: 16px 0;
+          border-bottom: 1px solid var(--line);
+          letter-spacing: 0.08em;
+        }
+
+        .grid.two,
+        .grid.three,
+        .founder-grid,
+        .contact-grid,
+        .footer-main {
+          grid-template-columns: 1fr;
+        }
+
+        .roles,
+        .highlight-band {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          width: min(100vw - 28px, 1180px);
+        }
+
+        .brand-name {
+          display: none;
+        }
+
+        .hero {
+          min-height: auto;
+          padding-top: 120px;
+        }
+
+        .hero-actions,
+        .stats,
+        .form-grid,
+        .roles,
+        .highlight-band {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-actions {
+          display: grid;
+        }
+
+        .stats {
+          gap: 18px;
+        }
+
+        .section {
+          padding: 76px 0;
+        }
+
+        .section-label::before,
+        .section-label::after {
+          width: 30px;
+        }
+
+        .card,
+        .theme-inner,
+        .contact-info,
+        form {
+          padding: 24px;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <nav class="nav" id="nav">
+      <div class="container">
+        <div class="nav-row">
+          <a class="brand" href="#hero">
+            <span class="brand-mark serif">寻</span>
+            <span class="brand-name serif" data-text="brandName">寻踪文旅</span>
+          </a>
+          <div class="nav-links" id="navLinks"></div>
+          <div class="nav-actions">
+            <button class="lang-button" id="langButton" type="button" aria-label="Switch language">EN</button>
+            <a class="btn btn-primary desktop-cta" href="#contact" data-text="book">预约咨询</a>
+            <button class="icon-button mobile-toggle" id="menuButton" type="button" aria-label="Toggle menu">☰</button>
+          </div>
+        </div>
+      </div>
+      <div class="mobile-panel">
+        <div class="container" id="mobileLinks"></div>
+      </div>
+    </nav>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero-content" data-animate>
+          <div class="location"><span>⌖</span><span data-text="hero.location">中国 · 河南</span></div>
+          <h1 class="serif" data-text="hero.title">行走于中原文脉</h1>
+          <p class="hero-subtitle serif-en" data-text="hero.subtitle">Walk the Central Plains, Read China's Soul</p>
+          <div class="diamond-divider"><span></span><i></i><span></span></div>
+          <p class="hero-tagline serif" data-text="hero.tagline">让每一次出发，都成为一场文化朝圣</p>
+          <p class="hero-desc" data-text="hero.description">专注高净值家庭与 5-7 人商务团队的高端文化定制旅行
+深耕中原文化秘境，做您最懂河南的文化同行者</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#themes" data-text="hero.ctaThemes">探索主题线路</a>
+            <a class="btn" href="#contact" data-text="hero.ctaBook">预约定制行程</a>
+          </div>
+          <div class="stats" id="heroStats"></div>
+        </div>
+      </section>
+
+      <section class="section" id="values">
+        <div class="container">
+          <header class="section-head" data-animate>
+            <div class="section-label serif" data-text="values.sectionLabel">核心优势</div>
+            <h2 class="section-title serif" data-text="values.title">为什么选择「寻踪」</h2>
+            <p class="section-subtitle serif-en" data-text="values.subtitle">在人人都能打卡的时代，稀缺的是不被看见的风景</p>
+          </header>
+          <div class="grid two" id="valuesGrid"></div>
+          <p class="bottom-quote serif" data-text="values.quote">「在流量泛滥的时代，真正的稀缺不是景点，而是理解。」</p>
+        </div>
+      </section>
+
+      <section class="section white" id="themes">
+        <div class="container">
+          <header class="section-head" data-animate>
+            <div class="section-label serif" data-text="themes.sectionLabel">主题线路</div>
+            <h2 class="section-title serif" data-text="themes.title">菜单式文化主题定制游</h2>
+            <p class="section-subtitle serif-en" data-text="themes.subtitle">六大主题自由组合，3-7天专属行程一键生成</p>
+          </header>
+          <div class="grid three" id="themesGrid"></div>
+          <p class="bottom-quote" data-text="themes.note"></p>
+          <div style="text-align:center;margin-top:28px"><a class="btn" href="#contact" data-text="themes.cta">获取专属行程方案</a></div>
+        </div>
+      </section>
+
+      <section class="section" id="founder">
+        <div class="container">
+          <header class="section-head" data-animate>
+            <div class="section-label serif" data-text="founder.sectionLabel">关于我们</div>
+            <h2 class="section-title serif" data-text="founder.title">主理人介绍</h2>
+            <p class="section-subtitle serif-en" data-text="founder.subtitle">一位用脚步丈量中原文脉的学者型旅行主理人</p>
+          </header>
+          <div class="founder-grid">
+            <div data-animate>
+              <img class="founder-photo" src="public/images/founder.jpg" alt="主理人照片" id="founderImage" />
+              <div class="quote-box serif">
+                <div data-text="founder.quote">「我不是导游，是你的文化同行者。」</div>
+                <small data-text="founder.quoteLabel">主理人寄语</small>
+              </div>
+            </div>
+            <div data-animate>
+              <p class="bio" data-text="founder.bio"></p>
+              <div id="credentials"></div>
+              <div class="roles" id="roles"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section white" id="services">
+        <div class="container">
+          <header class="section-head" data-animate>
+            <div class="section-label serif" data-text="services.sectionLabel">服务特色</div>
+            <h2 class="section-title serif" data-text="services.title">不止旅行，更是一场文化创作</h2>
+            <p class="section-subtitle serif-en" data-text="services.subtitle">我们带您去别人不去的地方，讲别人讲不清的故事</p>
+          </header>
+          <div class="grid three" id="servicesGrid"></div>
+          <div class="highlight-band" id="highlights"></div>
+          <p class="bottom-quote serif" data-text="services.bottomQuote"></p>
+        </div>
+      </section>
+
+      <section class="section" id="contact">
+        <div class="container">
+          <header class="section-head" data-animate>
+            <div class="section-label serif" data-text="contact.sectionLabel">联系我们</div>
+            <h2 class="section-title serif" data-text="contact.title">开启您的文化之旅</h2>
+            <p class="section-subtitle serif-en" data-text="contact.subtitle">填写预约信息，我们将在24小时内与您联系</p>
+          </header>
+          <div class="contact-grid">
+            <aside class="contact-info" data-animate>
+              <h3 class="serif" data-text="contact.infoTitle">联系方式</h3>
+              <div class="contact-line"><span data-text="contact.phoneLabel">咨询热线</span><strong data-text="contact.phone">+86 18638643423</strong></div>
+              <div class="contact-line"><span data-text="contact.emailLabel">电子邮箱</span><strong data-text="contact.email">contact@xunzong.travel</strong></div>
+              <div class="contact-line"><span data-text="contact.addressLabel">公司地址</span><strong data-text="contact.address">河南省郑州市
+河南寻踪文化发展有限公司</strong></div>
+              <div class="contact-quote serif" data-text="contact.infoQuote">「我们邀请你，一起走读中原，触摸中华文明的原初心跳。」</div>
+            </aside>
+            <div data-animate>
+              <form id="contactForm">
+                <div class="form-grid">
+                  <div class="field"><label data-label="contact.form.name">您的姓名</label><input name="name" required data-placeholder="contact.form.namePlaceholder" /></div>
+                  <div class="field"><label data-label="contact.form.phone">联系电话</label><input name="phone" required type="tel" data-placeholder="contact.form.phonePlaceholder" /></div>
+                  <div class="field"><label data-label="contact.form.type">出行类型</label><select name="type" id="typeSelect"></select></div>
+                  <div class="field"><label data-label="contact.form.theme">意向主题</label><select name="theme" id="themeSelect"></select></div>
+                  <div class="field"><label data-label="contact.form.date">预计出行日期</label><input name="date" type="date" /></div>
+                  <div class="field"><label data-label="contact.form.people">出行人数</label><input name="people" type="number" min="1" max="20" data-placeholder="contact.form.peoplePlaceholder" /></div>
+                  <div class="field full"><label data-label="contact.form.message">其他需求</label><textarea name="message" data-placeholder="contact.form.messagePlaceholder"></textarea></div>
+                  <div class="field full"><button class="btn btn-primary" type="submit" data-text="contact.form.submit">提交预约</button></div>
+                </div>
+              </form>
+              <div class="success" id="successMessage">
+                <h3 class="serif" data-text="contact.form.successTitle">预约提交成功</h3>
+                <p data-text="contact.form.successMessage">感谢您选择寻踪文旅，我们的旅行顾问将在24小时内与您联系，为您定制专属行程方案。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-main">
+        <div>
+          <div class="footer-brand">
+            <span class="brand-mark serif">寻</span>
+            <div>
+              <strong class="serif" data-text="brandName">寻踪文旅</strong>
+              <div class="serif-en" data-text="footer.slogan">XUNZONG CULTURAL TRAVEL</div>
+            </div>
+          </div>
+          <p data-text="footer.desc"></p>
+          <p class="serif" data-text="footer.brandQuote"></p>
+        </div>
+        <div>
+          <h4 class="serif" data-text="footer.quickLinks">快速导航</h4>
+          <ul id="footerLinks"></ul>
+        </div>
+        <div>
+          <h4 class="serif" data-text="footer.themeLinks">主题线路</h4>
+          <ul id="footerThemes"></ul>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span id="copyright"></span>
+        <span data-text="footer.tagline">高端文化定制旅行解决方案提供商</span>
+      </div>
+    </footer>
+
+    <script>
+      const translations = {
+        zh: {
+          brandName: "寻踪文旅",
+          nav: { home: "首页", themes: "主题线路", about: "关于我们", services: "服务特色", contact: "联系我们", book: "预约咨询" },
+          langSwitch: "EN",
+          hero: {
+            location: "中国 · 河南",
+            title: "行走于中原文脉",
+            subtitle: "Walk the Central Plains, Read China's Soul",
+            tagline: "让每一次出发，都成为一场文化朝圣",
+            description: "专注高净值家庭与 5-7 人商务团队的高端文化定制旅行\n深耕中原文化秘境，做您最懂河南的文化同行者",
+            ctaThemes: "探索主题线路",
+            ctaBook: "预约定制行程",
+            stats: [{ num: "200+", label: "实地调研遗址" }, { num: "6", label: "文化主题模块" }, { num: "5-7", label: "人精品小团" }]
+          },
+          values: {
+            sectionLabel: "核心优势",
+            title: "为什么选择「寻踪」",
+            subtitle: "在人人都能打卡的时代，稀缺的是不被看见的风景",
+            quote: "「在流量泛滥的时代，真正的稀缺不是景点，而是理解。」",
+            items: [
+              { num: "01", icon: "学", title: "学者主理，学术护航", desc: "河南大学历史文化学院旅游管理硕士主理，文化部认证「中国旅游专家」，确保每一条线路都经得起学术推敲。" },
+              { num: "02", icon: "径", title: "冷门秘境，拒绝人潮", desc: "80%行程点非传统A级景区，深入风穴寺、三苏坟、汉三阙等文化秘境，避开商业喧嚣，沉浸真实文脉。" },
+              { num: "03", icon: "影", title: "影像叙事，记忆永存", desc: "全程专业摄影跟拍 + 文化Vlog剪辑，行程结束后交付高清图集与精剪短片，让旅程成为可传承的数字资产。" },
+              { num: "04", icon: "享", title: "小团私享，极致服务", desc: "5-7人封顶，1:3服务配比，全程专车接送、文化导师随行、管家式响应，打造真正私密的深度体验。" }
+            ]
+          },
+          themes: {
+            sectionLabel: "主题线路",
+            title: "菜单式文化主题定制游",
+            subtitle: "六大主题自由组合，3-7天专属行程一键生成",
+            cta: "获取专属行程方案",
+            note: "每个主题均可自由勾选组合，支持时间、节奏、交通、住宿全维度个性化定制",
+            items: [
+              { icon: "佛", title: "佛教文化之旅", enTitle: "Buddhist Heritage", highlight: "禅修体验 · 早课参与 · 高僧对话", desc: "循着达摩面壁、玄奘译经的足迹，在中原大地探寻佛教东传的第一缕曙光。于晨钟暮鼓中体验禅修，在古刹林立的静谧中对话千年佛缘。", spots: ["少林寺 · 禅宗祖庭", "白马寺 · 佛教东传第一寺", "风穴寺 · 千年古刹", "大相国寺"] },
+              { icon: "道", title: "道教文化之旅", enTitle: "Taoist Immersion", highlight: "道教养生 · 符箓文化 · 太极晨练", desc: "从黄帝问道广成子的崆峒山，到老子著经的鹿邑太清宫，循着道家先贤的足迹，体验天人合一的东方智慧。", spots: ["崆峒山 · 黄帝问道", "老君山 · 道源圣地", "太昊陵 · 伏羲故里", "鹿邑太清宫 · 老子故里"] },
+              { icon: "书", title: "古代书院之旅", enTitle: "Academy Heritage", highlight: "国学讲座 · 朱子家礼体验 · 古籍抄写", desc: "行走于「四大书院」之中，在千年古柏下聆听圣贤遗音。亲手抄写古籍残页，体验朱子家礼的庄重，让书院精神在当代延续。", spots: ["嵩阳书院", "应天书院", "伊川书院", "花洲书院"] },
+              { icon: "祭", title: "凭吊 · 名人墓葬之旅", enTitle: "Literary Pilgrimage", highlight: "文人精神解读 · 墓祭仪式 · 诗词诵读", desc: "在三苏坟前感怀东坡风骨，于韩愈墓旁诵读《师说》。每一次凭吊，都是与先贤灵魂的对话，都是一次精神的洗礼。", spots: ["三苏坟 · 郏县", "韩愈墓 · 孟州", "欧阳修墓 · 新郑", "杜甫故里 · 李商隐墓"] },
+              { icon: "诗", title: "中原诗词之旅", enTitle: "Poetry Journey", highlight: "沉浸式吟诵 · 诗词创作工坊 · 古琴配乐", desc: "从「关关雎鸠」的淇水之畔，到「两个黄鹂鸣翠柳」的诗圣故里。循着诗词的足迹行走中原，在吟诵与创作中重燃千年文心。", spots: ["《诗经》· 淇水卫国", "唐诗 · 杜甫白居易足迹", "宋词 · 周邦彦李清照曾居地"] },
+              { icon: "嵩", title: "嵩岳文化深度游", enTitle: "Songyue Depth", highlight: "天文历法体验 · 天地之中文化解读", desc: "深入「天地之中」世界遗产群，从周公测景台的圭表影子中读懂「中」的奥义。这是一场关于中国宇宙观与文明根脉的深度探索。", spots: ["少林寺", "中岳庙", "观星台", "嵩阳书院", "汉三阙"] }
+            ]
+          },
+          founder: {
+            sectionLabel: "关于我们",
+            title: "主理人介绍",
+            subtitle: "一位用脚步丈量中原文脉的学者型旅行主理人",
+            bio: "长期致力于中原历史文化资源的活化与传播，熟悉河南及晋南、皖北等周边区域的历史遗迹、宗教文化与文学脉络，具备从学术研究到大众体验的产品转化能力。主张「旅行即学习，行走即传承」，致力于为高净值家庭与小型精英团队提供有深度、有温度、有审美的文化定制旅行服务。",
+            quote: "「我不是导游，是你的文化同行者。」",
+            quoteLabel: "主理人寄语",
+            photoAlt: "主理人照片",
+            roles: [{ role: "产品设计师", desc: "主导主题线路研发" }, { role: "首席文化导师", desc: "亲自带队高端团" }, { role: "内容主创", desc: "撰写文化解读脚本" }, { role: "品牌代言人", desc: "学者型旅行IP" }],
+            credentials: [
+              { icon: "学", title: "河南大学历史文化学院", detail: "旅游管理硕士", desc: "兼具历史学视野与旅游产业思维，擅长将学术资源转化为大众可体验的文化产品" },
+              { icon: "语", title: "中英文双语导游证", detail: "双语服务能力", desc: "可服务国际高净值客户或中外家庭，拓展高端市场边界，无障碍沟通全球宾客" },
+              { icon: "证", title: "文化部认证资质", detail: "China Travel Specialist", desc: "文化和旅游部认证「中国旅游专家」，官方认可的文化旅游专业权威身份" },
+              { icon: "文", title: "河南省少年儿童图书馆", detail: "「跟着诗词游河南」撰稿人", desc: "擅长将厚重文化以通俗、生动、有温度的方式表达，具备优质内容生产能力" }
+            ]
+          },
+          services: {
+            sectionLabel: "服务特色",
+            title: "不止旅行，更是一场文化创作",
+            subtitle: "我们带您去别人不去的地方，讲别人讲不清的故事",
+            items: [
+              { icon: "车", title: "高端交通", items: ["7座豪华商务车全程接送", "高铁包厢可选", "双语司机兼向导"] },
+              { icon: "宿", title: "精选住宿", items: ["精品文化主题酒店", "禅修别院", "历史建筑改造民宿"] },
+              { icon: "宴", title: "特色餐饮", items: ["定制「文人宴」「禅素宴」", "书院膳", "地方非遗美食"] },
+              { icon: "乐", title: "沉浸体验", items: ["每日1项沉浸活动", "抄经 · 拓片 · 茶道", "古琴 · 汉服礼仪"] },
+              { icon: "影", title: "影像记录", items: ["全程专业摄影跟拍", "高清图集精修50+张", "3-5分钟文化Vlog"] },
+              { icon: "册", title: "知识交付", items: ["电子《文脉手札》", "路线图 · 人物小传", "可选精装纪念册"] }
+            ],
+            highlights: [{ num: "¥3,000", unit: "起/人/天", label: "定制行程服务费" }, { num: "1:3", unit: "服务配比", label: "导师 · 管家 · 司机" }, { num: "3天", unit: "起订", label: "灵活行程时长" }],
+            bottomQuote: "在流量泛滥的时代，真正的奢侈不是奢华酒店，\n而是独享一片无人打扰的古碑林，和一段只属于你的、被镜头温柔记住的文化旅程。"
+          },
+          contact: {
+            sectionLabel: "联系我们",
+            title: "开启您的文化之旅",
+            subtitle: "填写预约信息，我们将在24小时内与您联系",
+            infoTitle: "联系方式",
+            phoneLabel: "咨询热线",
+            phone: "+86 18638643423",
+            emailLabel: "电子邮箱",
+            email: "contact@xunzong.travel",
+            addressLabel: "公司地址",
+            address: "河南省郑州市\n河南寻踪文化发展有限公司",
+            infoQuote: "「我们邀请你，一起走读中原，触摸中华文明的原初心跳。」",
+            form: { name: "您的姓名", namePlaceholder: "请输入姓名", phone: "联系电话", phonePlaceholder: "请输入手机号", type: "出行类型", typeFamily: "高净值家庭", typeBusiness: "商务团队（5-7人）", typeIndividual: "个人定制", theme: "意向主题", themePlaceholder: "请选择主题", date: "预计出行日期", people: "出行人数", peoplePlaceholder: "请输入人数", message: "其他需求", messagePlaceholder: "请描述您的特殊需求或偏好...", submit: "提交预约", successTitle: "预约提交成功", successMessage: "感谢您选择寻踪文旅，我们的旅行顾问将在24小时内与您联系，为您定制专属行程方案。" }
+          },
+          footer: { company: "河南寻踪文化发展有限公司", slogan: "XUNZONG CULTURAL TRAVEL", desc: "河南寻踪文化发展有限公司，致力于打造中国高端文化定制旅行新范式。活化中原文化遗产，让深度文化旅行成为高知人群的生活方式。", brandQuote: "「Walk the Central Plains, Read China's Soul.」", quickLinks: "快速导航", themeLinks: "主题线路", copyright: "版权所有", tagline: "高端文化定制旅行解决方案提供商" }
+        },
+        en: {
+          brandName: "Trace & Trail",
+          nav: { home: "Home", themes: "Themes", about: "About", services: "Services", contact: "Contact", book: "Book Now" },
+          langSwitch: "中文",
+          hero: {
+            location: "China · Henan",
+            title: "Walk the Central Plains",
+            subtitle: "Read China's Soul",
+            tagline: "Every journey is a cultural pilgrimage",
+            description: "Premium cultural bespoke travel for high-net-worth families\nand 5-7 person executive teams, exploring the hidden gems of Central China",
+            ctaThemes: "Explore Themes",
+            ctaBook: "Book Your Journey",
+            stats: [{ num: "200+", label: "Sites Explored" }, { num: "6", label: "Cultural Themes" }, { num: "5-7", label: "Guests Per Tour" }]
+          },
+          values: {
+            sectionLabel: "Why Us",
+            title: "Why Choose Trace & Trail",
+            subtitle: "In an age of mass tourism, true luxury is understanding",
+            quote: "\"In an age of information overload, what's truly scarce is not the scenery, but the understanding.\"",
+            items: [
+              { num: "01", icon: "A", title: "Scholar-Led, Academic Rigor", desc: "Led by a Master of Tourism Management from Henan University, certified by the Ministry of Culture as a China Travel Specialist. Every itinerary is academically vetted." },
+              { num: "02", icon: "P", title: "Off-the-Beaten-Path", desc: "80% of our destinations are outside traditional tourist routes. Discover hidden gems like Fengxue Temple, Sansu Tomb, and Han Sanque away from commercial crowds." },
+              { num: "03", icon: "V", title: "Cinematic Storytelling", desc: "Professional photography and videography throughout your journey. Receive a curated photo album and a 3-5 minute cultural vlog." },
+              { num: "04", icon: "S", title: "Intimate Groups, Premium Service", desc: "Groups capped at 5-7 guests with a 1:3 staff-to-guest ratio. Private vehicle, cultural mentor, and butler-style service." }
+            ]
+          },
+          themes: {
+            sectionLabel: "Themes",
+            title: "Menu-Style Cultural Themes",
+            subtitle: "Mix and match from 6 themes for your 3-7 day bespoke itinerary",
+            cta: "Get Your Custom Itinerary",
+            note: "Each theme can be freely combined. Fully customizable in terms of timing, pace, transport, and accommodation.",
+            items: [
+              { icon: "B", title: "Buddhist Heritage Journey", enTitle: "Buddhist Heritage", highlight: "Meditation · Morning Chant · Dialogue with Monks", desc: "Follow in the footsteps of Bodhidharma and Xuanzang. Experience meditation at dawn, explore ancient temples, and connect with millennia of Buddhist heritage in Central China.", spots: ["Shaolin Temple · Zen Origin", "White Horse Temple · Buddhism's Entry", "Fengxue Temple · Millennium Temple", "Daxiangguo Temple"] },
+              { icon: "T", title: "Taoist Immersion Journey", enTitle: "Taoist Immersion", highlight: "Taoist Wellness · Talisman Culture · Tai Chi", desc: "From Kongtong Mountain where the Yellow Emperor sought wisdom, to Laozi's hometown in Luyi. Walk the path of Taoist sages and embrace the wisdom of harmony.", spots: ["Kongtong Mountain · Yellow Emperor", "Laojun Mountain · Taoist Source", "Taihao Mausoleum · Fuxi", "Luyi Taiqing Palace · Laozi"] },
+              { icon: "A", title: "Ancient Academy Journey", enTitle: "Academy Heritage", highlight: "Lectures · Rituals · Ancient Book Copying", desc: "Walk among the Four Great Academies of ancient China. Copy classical manuscripts by hand, experience Zhu Xi's family rituals, and let the spirit of scholarship live on.", spots: ["Songyang Academy", "Yingtian Academy", "Yichuan Academy", "Huazhou Academy"] },
+              { icon: "L", title: "Literary Pilgrimage", enTitle: "Literary Pilgrimage", highlight: "Scholar Spirit · Memorial Rituals · Poetry Recitation", desc: "Pay respects at the tombs of Su Shi, Han Yu, and Ouyang Xiu. Every visit is a dialogue with the souls of ancient literati.", spots: ["Sansu Tomb · Jiaxian", "Han Yu Tomb · Mengzhou", "Ouyangxiu Tomb · Xinzheng", "Du Fu & Li Shangyin Sites"] },
+              { icon: "P", title: "Poetry of the Central Plains", enTitle: "Poetry Journey", highlight: "Recitation · Poetry Workshop · Guqin Music", desc: "From the banks of the Qi River where the Book of Songs was born, to Du Fu's homeland. Walk in the footsteps of poets and reignite the literary heart of a thousand years.", spots: ["Book of Songs · Qi River", "Tang Poetry · Du Fu & Bai Juyi", "Song Lyrics · Zhou Bangyan & Li Qingzhao"] },
+              { icon: "S", title: "Songyue Depth Tour", enTitle: "Songyue Depth", highlight: "Astronomy · World Heritage · Cosmic Order", desc: "Deep dive into the Center of Heaven and Earth World Heritage site. Decode the cosmic significance of ancient Chinese astronomy.", spots: ["Shaolin Temple", "Zhongyue Temple", "Dengfeng Observatory", "Songyang Academy", "Han Sanque"] }
+            ]
+          },
+          founder: {
+            sectionLabel: "About",
+            title: "The Founder",
+            subtitle: "A scholar-traveler who measures Central China's cultural pulse with every step",
+            bio: "Dedicated to the revitalization and dissemination of Central China's historical and cultural heritage. Familiar with historical sites, religious culture, and literary traditions across Henan, southern Shanxi, and northern Anhui. Advocates that travel is learning, walking is heritage.",
+            quote: "\"I am not a tour guide. I am your cultural companion.\"",
+            quoteLabel: "Founder's Note",
+            photoAlt: "Founder Photo",
+            roles: [{ role: "Product Designer", desc: "Curates thematic itineraries" }, { role: "Chief Mentor", desc: "Personally leads premium tours" }, { role: "Content Creator", desc: "Writes cultural narratives" }, { role: "Brand Ambassador", desc: "Scholar-traveler IP" }],
+            credentials: [
+              { icon: "A", title: "Henan University", detail: "M.A. Tourism Management", desc: "Combines historical perspective with tourism industry expertise, translating academic resources into accessible cultural experiences." },
+              { icon: "L", title: "Bilingual Guide License", detail: "Chinese & English", desc: "Serves international high-net-worth clients and mixed families, breaking language barriers to connect with global guests." },
+              { icon: "C", title: "Ministry of Culture Certified", detail: "China Travel Specialist", desc: "Officially certified by the Ministry of Culture and Tourism as a cultural travel specialist." },
+              { icon: "W", title: "Henan Children's Library", detail: "Travel Henan Through Poetry Author", desc: "Excels at expressing profound culture in accessible, vivid, and warm ways." }
+            ]
+          },
+          services: {
+            sectionLabel: "Services",
+            title: "More Than Travel, A Cultural Creation",
+            subtitle: "We take you where others don't go, and tell stories others can't tell",
+            items: [
+              { icon: "T", title: "Premium Transport", items: ["Luxury 7-seat vehicle", "Private train cabin option", "Bilingual driver-guide"] },
+              { icon: "S", title: "Curated Stays", items: ["Boutique cultural hotels", "Zen retreat courtyards", "Heritage building B&Bs"] },
+              { icon: "D", title: "Signature Dining", items: ["Custom Scholar Banquet and Zen Vegetarian", "Academy cuisine", "Local intangible heritage dishes"] },
+              { icon: "I", title: "Immersive Experiences", items: ["One immersive activity daily", "Sutra copying · Rubbing · Tea ceremony", "Guqin · Hanfu rituals"] },
+              { icon: "V", title: "Visual Documentation", items: ["Professional photography", "50+ curated photos", "3-5 min cultural vlog"] },
+              { icon: "K", title: "Knowledge Delivery", items: ["Digital Cultural Journal", "Route map · Biographies", "Optional hardcover album"] }
+            ],
+            highlights: [{ num: "¥3,000", unit: "per person/day from", label: "Custom Itinerary Fee" }, { num: "1:3", unit: "Staff-to-Guest Ratio", label: "Mentor · Butler · Driver" }, { num: "3 Days", unit: "Minimum", label: "Flexible Duration" }],
+            bottomQuote: "In an age of information overload, true luxury is not a five-star hotel,\nbut an undisturbed ancient stele forest, and a cultural journey gently captured on film, uniquely yours."
+          },
+          contact: {
+            sectionLabel: "Contact",
+            title: "Begin Your Cultural Journey",
+            subtitle: "Fill in your details and we will contact you within 24 hours",
+            infoTitle: "Contact Info",
+            phoneLabel: "Hotline",
+            phone: "+86 18638643423",
+            emailLabel: "Email",
+            email: "contact@xunzong.travel",
+            addressLabel: "Address",
+            address: "Zhengzhou, Henan\nTrace & Trail Co., Ltd.",
+            infoQuote: "\"We invite you to walk and read Central China together, touching the original heartbeat of Chinese civilization.\"",
+            form: { name: "Your Name", namePlaceholder: "Enter your name", phone: "Phone Number", phonePlaceholder: "Enter your phone number", type: "Travel Type", typeFamily: "High-Net-Worth Family", typeBusiness: "Executive Team (5-7)", typeIndividual: "Individual Custom", theme: "Preferred Theme", themePlaceholder: "Select a theme", date: "Preferred Date", people: "Number of Guests", peoplePlaceholder: "Enter number of guests", message: "Special Requests", messagePlaceholder: "Describe your special needs or preferences...", submit: "Submit Inquiry", successTitle: "Inquiry Submitted", successMessage: "Thank you for choosing Trace & Trail. Our travel consultant will contact you within 24 hours to customize your exclusive itinerary." }
+          },
+          footer: { company: "Trace & Trail Co., Ltd.", slogan: "XUNZONG CULTURAL TRAVEL", desc: "Dedicated to creating a new paradigm for premium cultural bespoke travel in China. Revitalizing Central China's cultural heritage, making deep cultural travel a lifestyle for the intellectually curious.", brandQuote: "\"Walk the Central Plains, Read China's Soul.\"", quickLinks: "Quick Links", themeLinks: "Themes", copyright: "All Rights Reserved", tagline: "Premium Cultural Bespoke Travel Solutions" }
+        }
+      };
+
+      const navTargets = [
+        ["home", "#hero"],
+        ["themes", "#themes"],
+        ["about", "#founder"],
+        ["services", "#services"],
+        ["contact", "#contact"]
+      ];
+
+      let lang = localStorage.getItem("traceTrailLang") || "zh";
+
+      function valueAt(obj, path) {
+        return path.split(".").reduce((acc, key) => acc && acc[key], obj);
+      }
+
+      function setText(selector, value) {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = value;
+      }
+
+      function render() {
+        const t = translations[lang];
+        document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+        document.title = lang === "zh" ? "寻踪文旅 | Trace & Trail" : "Trace & Trail | Xunzong Cultural Travel";
+        document.querySelectorAll("[data-text]").forEach((el) => {
+          const value = valueAt(t, el.dataset.text);
+          if (value !== undefined) el.textContent = value;
+        });
+        document.querySelectorAll("[data-label]").forEach((el) => {
+          const value = valueAt(t, el.dataset.label);
+          if (value !== undefined) el.textContent = value;
+        });
+        document.querySelectorAll("[data-placeholder]").forEach((el) => {
+          const value = valueAt(t, el.dataset.placeholder);
+          if (value !== undefined) el.placeholder = value;
+        });
+        document.getElementById("langButton").textContent = t.langSwitch;
+        document.getElementById("founderImage").alt = t.founder.photoAlt;
+
+        const navHtml = navTargets.map(([key, href]) => `<a href="${href}">${t.nav[key]}</a>`).join("");
+        document.getElementById("navLinks").innerHTML = navHtml;
+        document.getElementById("mobileLinks").innerHTML = navHtml + `<a class="btn btn-primary" href="#contact">${t.nav.book}</a>`;
+        document.getElementById("footerLinks").innerHTML = navTargets.map(([key, href]) => `<li><a href="${href}">${t.nav[key]}</a></li>`).join("");
+
+        document.getElementById("heroStats").innerHTML = t.hero.stats.map((stat) => `
+          <div><div class="stat-num serif-en">${stat.num}</div><div class="stat-label serif">${stat.label}</div></div>
+        `).join("");
+
+        document.getElementById("valuesGrid").innerHTML = t.values.items.map((item) => `
+          <article class="card" data-animate>
+            <div class="value-num serif-en">${item.num}</div>
+            <div class="icon-box serif">${item.icon}</div>
+            <h3 class="serif">${item.title}</h3>
+            <p>${item.desc}</p>
+          </article>
+        `).join("");
+
+        document.getElementById("themesGrid").innerHTML = t.themes.items.map((item) => `
+          <article class="theme-card" data-animate>
+            <div class="theme-inner">
+              <div class="theme-top">
+                <div class="icon-box serif">${item.icon}</div>
+                <div class="theme-en serif-en">${item.enTitle}</div>
+              </div>
+              <h3 class="serif">${item.title}</h3>
+              <div class="highlight">${item.highlight}</div>
+              <p>${item.desc}</p>
+              <div class="chips">${item.spots.map((spot) => `<span class="chip">${spot}</span>`).join("")}</div>
+            </div>
+          </article>
+        `).join("");
+
+        document.getElementById("credentials").innerHTML = t.founder.credentials.map((item) => `
+          <article class="credential">
+            <div class="icon-box serif">${item.icon}</div>
+            <div>
+              <h3 class="serif">${item.title}</h3>
+              <div class="detail">${item.detail}</div>
+              <p>${item.desc}</p>
+            </div>
+          </article>
+        `).join("");
+
+        document.getElementById("roles").innerHTML = t.founder.roles.map((item) => `
+          <div class="role"><strong class="serif">${item.role}</strong><span>${item.desc}</span></div>
+        `).join("");
+
+        document.getElementById("servicesGrid").innerHTML = t.services.items.map((item) => `
+          <article class="service-card" data-animate>
+            <div class="service-title"><div class="icon-box serif">${item.icon}</div><h3 class="serif">${item.title}</h3></div>
+            <ul>${item.items.map((entry) => `<li>${entry}</li>`).join("")}</ul>
+          </article>
+        `).join("");
+
+        document.getElementById("highlights").innerHTML = t.services.highlights.map((item) => `
+          <div><div class="num serif-en">${item.num}</div><div class="unit">${item.unit}</div><div class="label serif">${item.label}</div></div>
+        `).join("");
+
+        document.getElementById("typeSelect").innerHTML = `
+          <option value="family">${t.contact.form.typeFamily}</option>
+          <option value="business">${t.contact.form.typeBusiness}</option>
+          <option value="individual">${t.contact.form.typeIndividual}</option>
+        `;
+        document.getElementById("themeSelect").innerHTML = `<option value="">${t.contact.form.themePlaceholder}</option>` +
+          t.themes.items.map((item, index) => `<option value="${index}">${item.title}</option>`).join("");
+        document.getElementById("footerThemes").innerHTML = t.themes.items.map((item) => `<li><a href="#themes">${item.title}</a></li>`).join("");
+        document.getElementById("copyright").textContent = `© ${new Date().getFullYear()} ${t.footer.company} ${t.footer.copyright}`;
+        observeAnimated();
+      }
+
+      function observeAnimated() {
+        const items = document.querySelectorAll("[data-animate]");
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("visible");
+          });
+        }, { threshold: 0.12 });
+        items.forEach((item) => observer.observe(item));
+      }
+
+      document.getElementById("langButton").addEventListener("click", () => {
+        lang = lang === "zh" ? "en" : "zh";
+        localStorage.setItem("traceTrailLang", lang);
+        render();
+      });
+
+      document.getElementById("menuButton").addEventListener("click", () => {
+        document.getElementById("nav").classList.toggle("open");
+      });
+
+      document.addEventListener("click", (event) => {
+        const link = event.target.closest("a[href^='#']");
+        if (!link) return;
+        const target = document.querySelector(link.getAttribute("href"));
+        if (!target) return;
+        event.preventDefault();
+        document.getElementById("nav").classList.remove("open");
+        target.scrollIntoView({ behavior: "smooth" });
+      });
+
+      document.getElementById("contactForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        form.style.display = "none";
+        document.getElementById("successMessage").classList.add("show");
+        window.setTimeout(() => {
+          form.reset();
+          form.style.display = "block";
+          document.getElementById("successMessage").classList.remove("show");
+        }, 4200);
+      });
+
+      window.addEventListener("scroll", () => {
+        document.getElementById("nav").classList.toggle("scrolled", window.scrollY > 60);
+      }, { passive: true });
+
+      render();
+    </script>
   </body>
 </html>
