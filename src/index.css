@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #F8F4ED;
+    color: #2F4B5D;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(47, 75, 93, 0.2);
+    color: #2F4B5D;
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply w-full px-6 sm:px-8 lg:px-16 xl:px-24 2xl:px-32;
+  }
+
+  .section-title {
+    @apply font-serif-zh text-3xl sm:text-4xl lg:text-5xl font-semibold text-brand-dark tracking-wide;
+  }
+
+  .section-subtitle {
+    @apply font-serif-en text-lg sm:text-xl text-brand-dark-60 italic mt-3;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-8 py-3.5 bg-brand-dark text-brand-light font-medium tracking-wider
+           transition-all duration-300 hover:bg-brand-red hover:shadow-lg hover:shadow-brand-red/20
+           active:scale-[0.98] rounded-sm;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-8 py-3.5 border border-brand-dark text-brand-dark font-medium tracking-wider
+           transition-all duration-300 hover:bg-brand-dark hover:text-brand-light
+           active:scale-[0.98] rounded-sm;
+  }
+
+  .card-hover {
+    @apply transition-all duration-500 hover:-translate-y-2 hover:shadow-xl;
+  }
+
+  .divider-line {
+    @apply w-16 h-[2px] bg-brand-red;
+  }
+}
+
+@layer utilities {
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-600 { animation-delay: 600ms; }
+}
